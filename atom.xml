@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+  <title>ztz.send(:later)</title>
+  
+  <link href="/atom.xml" rel="self"/>
+  
+  <link href="http://ztz.me/"/>
+  <updated>2017-01-18T07:24:54.000Z</updated>
+  <id>http://ztz.me/</id>
+  
+  <author>
+    <name>ztz</name>
+    
+  </author>
+  
+  <generator uri="http://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>准备写点什么</title>
+    <link href="http://ztz.me/2017/01/18/%E5%87%86%E5%A4%87%E5%86%99%E7%82%B9%E4%BB%80%E4%B9%88/"/>
+    <id>http://ztz.me/2017/01/18/准备写点什么/</id>
+    <published>2017-01-18T07:22:41.000Z</published>
+    <updated>2017-01-18T07:24:54.000Z</updated>
+    
+    <content type="html"><![CDATA[<p>不然就浪费我买的域名了</p>
+]]></content>
+    
+    <summary type="html">
+    
+      &lt;p&gt;不然就浪费我买的域名了&lt;/p&gt;
+
+    
+    </summary>
+    
+    
+      <category term="other" scheme="http://ztz.me/tags/other/"/>
+    
+  </entry>
+  
+</feed>
