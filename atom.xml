@@ -5,7 +5,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="http://ztz.me/"/>
-  <updated>2017-01-18T16:43:08.000Z</updated>
+  <updated>2019-01-06T12:31:39.979Z</updated>
   <id>http://ztz.me/</id>
   
   <author>
@@ -14,6 +14,62 @@
   </author>
   
   <generator uri="http://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>Singleton 的思考</title>
+    <link href="http://ztz.me/2019/01/06/Singleton-%E7%9A%84%E6%80%9D%E8%80%83/"/>
+    <id>http://ztz.me/2019/01/06/Singleton-的思考/</id>
+    <published>2019-01-06T12:18:59.000Z</published>
+    <updated>2019-01-06T12:31:39.979Z</updated>
+    
+    <content type="html"><![CDATA[<blockquote>
+<p>Everything in Ruby is an Object</p>
+</blockquote>
+<h2 id="1"><a href="#1" class="headerlink" title="1"></a>1</h2><p>Ruby 允许给单个对象增加方法，方法添加后只对该对象生效</p>
+<figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div></pre></td><td class="code"><pre><div class="line"><span class="comment"># foo 是 String 类的对象</span></div><div class="line">foo = <span class="string">'bar'</span></div><div class="line"></div><div class="line"><span class="comment"># 给 foo 添加单例方法 bar，只存在在 foo 中</span></div><div class="line"><span class="function"><span class="keyword">def</span> <span class="title">foo</span>.<span class="title">bar</span></span></div><div class="line">  puts <span class="string">'this is foobar'</span></div><div class="line"><span class="keyword">end</span></div><div class="line"></div><div class="line"><span class="comment"># 在 foo 上调用 bar 方法成功</span></div><div class="line">foo.bar <span class="comment"># =&gt; 'this is foobar'</span></div><div class="line"></div><div class="line"><span class="comment"># 在另一个字符串上调用失败</span></div><div class="line"><span class="string">'foobar'</span>.bar <span class="comment">#=&gt; NoMethodError</span></div><div class="line"></div><div class="line"><span class="comment"># 证明 bar 确实是 foo 的单件方法</span></div><div class="line">foo.singleton_methods <span class="comment">#=&gt; [:bar]</span></div></pre></td></tr></table></figure>
+<h2 id="2"><a href="#2" class="headerlink" title="2"></a>2</h2><p>Ruby 允许给类添加类方法，方法添加后只对该类生效</p>
+<figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div></pre></td><td class="code"><pre><div class="line"><span class="comment"># 定义类方法的第一种方式</span></div><div class="line"><span class="class"><span class="keyword">class</span> <span class="title">Foo</span></span></div><div class="line">  <span class="function"><span class="keyword">def</span> <span class="title">self</span>.<span class="title">bar</span></span></div><div class="line">    <span class="string">'foobar'</span></div><div class="line">  <span class="keyword">end</span></div><div class="line"><span class="keyword">end</span></div><div class="line"></div><div class="line">Foo.bar <span class="comment"># =&gt; 'foobar'</span></div><div class="line"></div><div class="line"><span class="comment"># 定义类方法的第二种方式</span></div><div class="line"><span class="class"><span class="keyword">class</span> <span class="title">Foo</span></span></div><div class="line">  <span class="class"><span class="keyword">class</span> &lt;&lt; self</span></div><div class="line">    <span class="function"><span class="keyword">def</span> <span class="title">bar</span></span></div><div class="line">      <span class="string">'foobar'</span></div><div class="line">    <span class="keyword">end</span></div><div class="line">  <span class="keyword">end</span></div><div class="line"><span class="keyword">end</span></div><div class="line"></div><div class="line">Foo.bar <span class="comment"># =&gt; 'foobar'</span></div></pre></td></tr></table></figure>
+<h2 id="3"><a href="#3" class="headerlink" title="3"></a>3</h2><p>Ruby 中一切皆是对象</p>
+<p>类也是对象</p>
+<p>所有类都是 <code>Class</code> 类的对象</p>
+<p>#2 中的 <code>Foo</code> 类，也是 <code>Class</code> 类的对象，给 <code>Foo</code> 添加的类方法在其他 <code>Class</code> 的对象中不存在</p>
+<figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line"><span class="comment"># 同为 Class 的对象，String 却没有 bar 方法</span></div><div class="line">String.bar <span class="comment"># =&gt; NoMethodError</span></div><div class="line"></div><div class="line"><span class="comment"># bar 只是 Foo 的单例对象</span></div><div class="line">Foo.singleton_methods <span class="comment"># =&gt; [:bar]</span></div></pre></td></tr></table></figure>
+<p>#2 中给类 <code>Foo</code> 添加的类方法，就像给 #1 中给对象 <code>foo</code> 添加的方法一样</p>
+<p>添加的都是单例方法</p>
+<p>所以所谓的类方法，其实就是类对象的单例方法</p>
+<p>只不过 #1 和 #2 它们作用在不同的对象上而已</p>
+<figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line"><span class="comment"># 证明 bar 确实是 Foo 类的单例方法（类方法）</span></div><div class="line">Foo.singleton_methods <span class="comment"># =&gt; [:bar]</span></div><div class="line"></div><div class="line"><span class="comment"># 换种方式定义类方法就显而易见了</span></div><div class="line"><span class="function"><span class="keyword">def</span> <span class="title">Foo</span>.<span class="title">bar</span></span></div><div class="line">  <span class="string">'foobar'</span></div><div class="line"><span class="keyword">end</span></div><div class="line"></div><div class="line">Foo.bar <span class="comment"># =&gt; 'foobar'</span></div></pre></td></tr></table></figure>
+<p>如果对象是个实例对象，添加的方法就是他的单件方法</p>
+<p>如果对象是个类，添加的方法就是这个类的类方法</p>
+<h2 id="4"><a href="#4" class="headerlink" title="4"></a>4</h2><p>Ruby 中查找方法遵循“向右一步，再向上”</p>
+<p>先向右一步查找实例对象所属的类是否存在该方法，再向上查找该类的祖先类是否存在该方法</p>
+<p><img src="https://i.imgur.com/Cs7PAzg.jpg" alt=""></p>
+<p>而单例方法并不定义在类中（否则所以实例对象都能共享）</p>
+<p>所以单例方法存在在 ghost 里，这个 ghost 位于对象和类之间</p>
+<p><img src="https://i.imgur.com/JISsDYR.jpg" alt=""></p>
+<p>这个 ghost 又被称作单例类，或单件类（singleton class）</p>
+<h2 id="5"><a href="#5" class="headerlink" title="5"></a>5</h2><p>单例类位于类和实例之间，像个幽灵，但是利用 <code>class &lt;&lt; obj</code> 语法可以打开 obj 所属的单例类</p>
+<p>比如 #2 的 <code>Foo</code> 类</p>
+<figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line"><span class="class"><span class="keyword">class</span> <span class="title">Foo</span>;</span> <span class="keyword">end</span></div><div class="line"></div><div class="line"><span class="comment"># 进入到 Foo 的单例类并定义一个方法 bar</span></div><div class="line"><span class="class"><span class="keyword">class</span> &lt;&lt; Foo</span></div><div class="line">  <span class="function"><span class="keyword">def</span> <span class="title">bar</span></span></div><div class="line">    <span class="string">'foobar'</span></div><div class="line">  <span class="keyword">end</span></div><div class="line"><span class="keyword">end</span></div><div class="line"></div><div class="line"><span class="comment"># bar 成了 Foo 的类方法</span></div><div class="line">Foo.bar <span class="comment"># =&gt; 'foobar'</span></div></pre></td></tr></table></figure>
+<p>再比如 #1 中的实例对象 <code>foo</code></p>
+<figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line">foo = <span class="string">'bar'</span></div><div class="line"></div><div class="line"><span class="comment"># 打开 foo 所属的单例类</span></div><div class="line"><span class="class"><span class="keyword">class</span> &lt;&lt; foo</span></div><div class="line">  <span class="function"><span class="keyword">def</span> <span class="title">bar</span></span></div><div class="line">    <span class="string">'foobar'</span></div><div class="line">  <span class="keyword">end</span></div><div class="line"><span class="keyword">end</span></div><div class="line"></div><div class="line">foo.bar <span class="comment"># =&gt; 'foobar'</span></div></pre></td></tr></table></figure>
+<h2 id="6"><a href="#6" class="headerlink" title="6"></a>6</h2><p>Ruby 的对象模型相当简洁</p>
+<blockquote>
+<p>Simple is hard</p>
+</blockquote>
+]]></content>
+    
+    <summary type="html">
+    
+      &lt;blockquote&gt;
+&lt;p&gt;Everything in Ruby is an Object&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;h2 id=&quot;1&quot;&gt;&lt;a href=&quot;#1&quot; class=&quot;headerlink&quot; title=&quot;1&quot;&gt;&lt;/a&gt;1&lt;/h2&gt;&lt;p&gt;Ruby 允许给
+    
+    </summary>
+    
+    
+  </entry>
   
   <entry>
     <title>准备写点什么</title>
